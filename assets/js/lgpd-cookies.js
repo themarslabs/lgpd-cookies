@@ -120,7 +120,7 @@ jQuery(document).ready(function($) {
             data: {
                 action: 'lgpd_save_history',
                 nonce: lgpdSettings.nonce,
-                cookies_accepted: JSON.stringify(preferences)
+                cookies_accepted: preferences.join(', ')
             },
             success: function(response) {
                 console.log('Histórico salvo com sucesso');
