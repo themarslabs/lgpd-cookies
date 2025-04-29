@@ -85,6 +85,8 @@ jQuery(document).ready(function($) {
         });
     }
 
+    
+
     // Gerenciar cookies e scripts
     function manageCookies(preferences) {
         localStorage.setItem('lgpd_cookies', JSON.stringify(preferences));
@@ -113,6 +115,9 @@ jQuery(document).ready(function($) {
             }
         });
 
+        // Garante que preferences é um array
+        preferences = Array.isArray(preferences) ? preferences : [];
+
         // Salvar no histórico via AJAX
         $.ajax({
             url: lgpdSettings.ajax_url,
@@ -120,7 +125,8 @@ jQuery(document).ready(function($) {
             data: {
                 action: 'lgpd_save_history',
                 nonce: lgpdSettings.nonce,
-                cookies_accepted: preferences.join(', ')
+                //cookies_accepted: JSON.stringify(preferences)
+                cookies_accepted: Object.keys(preferences).filter(key => preferences[key]).join(', ')
             },
             success: function(response) {
                 console.log('Histórico salvo com sucesso');
@@ -188,15 +194,15 @@ jQuery(document).ready(function($) {
 
 
     $('#lgpd-clear-history').on('click', function(e) {
-        e.preventDefault();
+        //e.preventDefault();
         
         if (confirm('Tem certeza que deseja limpar todo o histórico de aceites? Esta ação não pode ser desfeita.')) {
             $.ajax({
-                url: '<?php echo admin_url('admin-ajax.php'); ?>',
+                url: lgpdSettings.ajax_url,
                 type: 'POST',
                 data: {
                     action: 'lgpd_clear_history',
-                    nonce: '<?php echo wp_create_nonce('lgpd_clear_history_nonce'); ?>'
+                    nonce: lgpdSettings.nonce,
                 },
                 success: function(response) {
                     if (response.success) {
